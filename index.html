@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 2 會計模擬試題練習系統</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .question-card {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-left: 5px solid #3498db;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .question-text {
+            font-weight: bold;
+            font-size: 1.05em;
+            margin-bottom: 12px;
+            white-space: pre-line;
+        }
+        .options {
+            margin-left: 10px;
+        }
+        .option-label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #219150;
+        }
+        button.btn-reset {
+            background-color: #e67e22;
+        }
+        button.btn-reset:hover {
+            background-color: #d35400;
+        }
+        .result-box {
+            display: none;
+            background: #e8f8f5;
+            border: 1px solid #2ecc71;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .wrong {
+            color: #c0392b;
+            font-weight: bold;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        /* 版權宣告樣式 */
+        .copyright-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #4a5568;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        .copyright-footer strong {
+            color: #2d3748;
+            font-size: 1.05em;
+        }
+        .copyright-footer a {
+            color: #0073e6;
+            text-decoration: none;
+        }
+        .copyright-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Level 2 會計線上練習題庫</h1>
+    <p class="subtitle">系統每次將隨機抽選 30 題進行練習</p>
+
+    <div id="resultBox" class="result-box">
+        <h2>練習結果</h2>
+        <p id="scoreText" style="font-size: 1.2em;"></p>
+    </div>
+
+    <form id="quizForm">
+        <div id="questionsContainer"></div>
+
+        <div class="btn-container">
+            <button type="button" onclick="submitQuiz()">提交答案並核對</button>
+            <button type="button" class="btn-reset" onclick="initQuiz()">重新隨機抽取 30 題</button>
+        </div>
+    </form>
+
+    <!-- 版權宣告區塊 -->
+    <footer class="copyright-footer">
+        <p><strong>© 2026 Hung Hung Chua (Reed Chua). All Rights Reserved.</strong></p>
+        <p>本測驗教材及內容受版權法保護，未經書面授權不得複製、轉載或用於商業用途。</p>
+        <p>如有課程查詢、教學合作或意見反饋，歡迎聯絡：<a href="mailto:reedchua@yahoo.com">reedchua@yahoo.com</a></p>
+    </footer>
+</div>
+
+<script>
+// 已清除舊題號的完整題庫資料
+const questionBank = [
+    // Mock 6
+    { id: "M6_01", type: "mc", question: "Which one of the following identifies the main purpose of reconciling the trade payables ledger control balance?", options: ["To ensure the total of the individual trade payable balances matches the control account balance", "To avoid the risk of irrecoverable and fraud accounting", "To identify the amount of discount allowed to credit customers", "To ensure all cash payment to customers were recorded correctly"], answer: "To ensure the total of the individual trade payable balances matches the control account balance" },
+    { id: "M6_02", type: "mc", question: "Which one of the following is example(s) of source document used in bookkeeping", options: ["Debit note", "Credit note", "Invoice", "Statement of Account"], answer: "Invoice" },
+    { id: "M6_03", type: "text", question: "The balance on the trade receivables control account of Office Supplies at the year ended of 31 December 2025 was $28500.\nWhen carrying out the reconciliation process, the following errors were identified:\n1. A payment from Larry Jackson of $500 was posted to Lorry Jackson wrongly.\n2. A credit sales $700 was posted correctly in receivables control account but no entry was made in individual customer account.\n3. A receipt from Johnson $500 had been completely omitted from the book.\n\nThe balance on the trade receivables control account after the above errors have been corrected is:", answer: "28000" },
+    { id: "M6_04", type: "mc", question: "Which one of the following is a typical use of the journal?", options: ["Correcting errors", "Writing off irrecoverable debts", "Writing off depreciation", "Transfer cash to saving account"], answer: "Correcting errors" },
+    { id: "M6_05", type: "mc", question: "Identify what error has been made for 'rental income received was posted to the debit side of bank account and credit side of rent received account'.", options: ["Error or reversal of entries", "Error of transposition", "Error of duplication", "No error"], answer: "Error or reversal of entries" },
+    { id: "M6_06", type: "text", question: "Identify the type of error for 'telephone expenses totalling $235 were enter in the account records as $253. This is error of:", answer: "Error of Original Entry" },
+    { id: "M6_07", type: "text", question: "Sales revenue $13579, Cost of sales $6802, Expenses $3137. Two errors journals: Dr. Rent $300 Cr Bank $300; Dr. Telephone expenses $500 Cr. Travelling expenses $500. The revised net profit figure should be:", answer: "3640" },
+    { id: "M6_08", type: "mc", question: "Which one of the following accounting concept states that a business should keep its financial records separate from its owners?", options: ["Accrual", "Business entity", "Consistency", "Realization"], answer: "Business entity" },
+    { id: "M6_09", type: "mc", question: "Which one of the following identifies how the reducing balance method is calculated?", options: ["A fixed percentage of the cost of the non-current asset", "A fixed percentage of the carrying value of the non-current assets", "(Cost - scape value) / years of use", "Cost - residue value"], answer: "A fixed percentage of the carrying value of the non-current assets" },
+    { id: "M6_10", type: "text", question: "GoHike purchased a motor vehicle $15,750 on 1 April 2022. Residue value $2,075, estimated life 5 years. Carrying value as of 31 March 2025 is:", answer: "7545" },
+    { id: "M6_11", type: "text", question: "Prepayment for telephone expenses $840 on 1 April 2024. Paid $10,320 in year ended 31 March 2025. Included $2040 for quarter ended 31 May 2025. Amount in P&L for telephone expenses is:", answer: "9120" },
+    { id: "M6_12", type: "text", question: "Rent for year ended 30 June 2025 amounted to $6800. Included an invoice for 3 months ending 31 July 2025 totalling $1800. Prepaid rent expenses in SOFP is:", answer: "600" },
+    { id: "M6_13", type: "text", question: "Purchased motor vehicle for $8,000 on 1 Sept 2023. Depreciation 20% reducing balance. Sold on 1 Sept 2025 for $4,500. Profit or loss on disposal is (write Loss 620 or -620):", answer: "Loss 620" },
+    { id: "M6_14", type: "text", question: "Paid $1,728 for 12-month subscription starting 1 Aug 2024. Amount in P&L for year ending 30 Nov 2024 is:", answer: "576" },
+    { id: "M6_15", type: "mc", question: "Write off outstanding balance $650 from trade receivable account. Journal entry:", options: ["Dr. Irrecoverable debts $650, Cr. Trade receivables $650", "Dr. Trade receivable $650, Cr. Irrecoverable Debt $650", "Dr. Profit or loss account $650, Cr. Allowance for doubtful debts $650", "Dr. Allowance for doubtful debt $650, Cr. Profit or loss account $650"], answer: "Dr. Irrecoverable debts $650, Cr. Trade receivables $650" },
+    { id: "M6_16", type: "mc", question: "Which one of the following identifies the purpose of partnership appropriation account?", options: ["To record partner's salaries, interest on capital and drawing", "To create the value of goodwill between partners", "To write off the value of goodwill between partners", "To record the capital contribution by each partner"], answer: "To record partner's salaries, interest on capital and drawing" },
+    { id: "M6_17", type: "mc", question: "Difference between direct and indirect cost in manufacturing business:", options: ["The wage of factory supervisor is direct cost", "Direct costs are variable but indirect costs are fixed", "Direct costs are always higher than indirect cost", "Direct cost can be traced directly toe the manufacturing of goods"], answer: "Direct cost can be traced directly toe the manufacturing of goods" },
+    { id: "M6_18", type: "mc", question: "Receipts and payments account is used to record the surplus or deficit in a non-profit organization.", options: ["True", "False"], answer: "False" },
+    { id: "M6_19", type: "mc", question: "A private limited company can issue shares to the public whereas a public limited company cannot.", options: ["True", "False"], answer: "False" },
+    { id: "M6_20", type: "text", question: "Direct materials 55 kg at $7.50/kg, Direct labor 10 hours at total $220, Fixed overhead 9 hours at $54/hr. Prime cost per unit is:", answer: "632.50" },
+    { id: "M6_21", type: "mc", question: "Account used to record surplus or deficit of income over expenditure in non-profit organization:", options: ["Receipt and payment account", "Income and expenditure account", "Statement of profit or loss", "Statement of financial position"], answer: "Income and expenditure account" },
+    { id: "M6_22", type: "text", question: "Subscriptions receipts $5208 during year ended 31 Dec 2025. Amount shown in Income & Expenditure Account is:", answer: "5208" },
+    { id: "M6_23", type: "text", question: "Issued 60,000 preference shares at $1 nominal value with 8% annual dividend. Profit was $120,000. Total preference dividend payable is:", answer: "4800" },
+    { id: "M6_24", type: "text", question: "Profit $42,000, invested $12,000 extra capital, drawings $24,000. Closing capital $66,000. Opening capital is:", answer: "36000" },
+    { id: "M6_25", type: "text", question: "Sales $33,600, opening inventory $4,840, closing inventory $5,360. Gross margin 60%. Purchases figure for year is:", answer: "13960" },
+    { id: "M6_26", type: "mc", question: "Which ratio is used to measure a company's profitability?", options: ["Acid-test Ratio", "Return on capital employed", "Gross profit ratio", "Inventory turnover ratio"], answer: "Return on capital employed" },
+    { id: "M6_27", type: "mc", question: "Which statement is true?", options: ["Ratios can be used to compare the performance of a business over time", "Capital employed is calculated as cost of sales / opening inventory", "Gross profit margins can only increase if sales prices have increased", "The gross profit marign would be expected to increase if cost of sales increase"], answer: "Ratios can be used to compare the performance of a business over time" },
+    { id: "M6_28", type: "mc", question: "Quick Ratio (Acid-Test) is a more stringent measure of liquidity because it:", options: ["Includes all current assets, providing a broader view of liquidity.", "Excludes inventory and other less liquid current assets, focusing on assets that can be converted to cash most quickly.", "Measures a company's efficiency in using its assets to generate sales", "Compares a company's total debt to its shareholder equity to assess financial leverage."], answer: "Excludes inventory and other less liquid current assets, focusing on assets that can be converted to cash most quickly." },
+    { id: "M6_29", type: "mc", question: "Return on Capital Employed (ROCE) is calculated as:", options: ["Profit / sales x 100%", "PBIT / (Total assets - current liabilities)", "(Current Assets - Inventory) / Current Liabilities", "None of above"], answer: "PBIT / (Total assets - current liabilities)" },
+    { id: "M6_30", type: "mc", question: "Higher selling price with no change in sales volume or cost. Impact on gross profit margin and net profit margin?", options: ["Increase, increase", "Decrease, Decrease", "Increase, Decrease", "Decrease, Increase"], answer: "Increase, increase" },
+
+    // Mock 7
+    { id: "M7_01", type: "mc", question: "A receipt for bank interest from saving account $200 recorded as Dr. Interest expense $200 Cr. Bank $200. Will the trial balance still balance?", options: ["True", "False"], answer: "False" },
+    { id: "M7_02", type: "text", question: "Opening receivables $7,321, closing $6,954. Cash received $45,678. Credit sales for period is:", answer: "45311" },
+    { id: "M7_03", type: "mc", question: "Which transaction appears in trade payable ledger control account?", options: ["Credit sales", "Discount allowed", "Return outwards", "Contra entry"], answer: "Contra entry" },
+    { id: "M7_04", type: "mc", question: "Computer $1,200 incorrectly recorded in Purchases account. Correcting journal:", options: ["Dr. Cash, Cr. Purchases", "Dr. Computer, Cr. Purchases", "Dr. Purchases, Cr. Cash", "Dr. Computer, Cr. Bank"], answer: "Dr. Computer, Cr. Purchases" },
+    { id: "M7_05", type: "mc", question: "Trial balance: Debit $34,567, Credit $34,657. Entry in suspense account to balance:", options: ["Debit, $90", "Credit, $90", "Debit, $45", "Credit, $180"], answer: "Debit, $90" },
+    { id: "M7_07", type: "text", question: "[ __________ ] concept assumes a business is going to continue trade for foreseeable future.", answer: "Going concern" },
+    { id: "M7_08", type: "text", question: "Cost reduced by residual value spread over useful life is [ __________ ] depreciation method.", answer: "Straight line" },
+    { id: "M7_09", type: "mc", question: "Allowance for doubtful debts adjusted from $2,500 down to $2,240. The decrease of $260 increases profit by $260.", options: ["True", "False"], answer: "True" },
+    { id: "M7_10", type: "mc", question: "Write off balance of credit customer $2,345. Journal entry:", options: ["Dr. Trade receivable $2,345, Cr. Irrecoverable debts $2,345", "Dr. Irrecoverable debt $2,345, Cr. Trade receivable $2,345", "Dr. Irrecoverable debt $2,345, Cr. Allowance for doubtful debt $2,345", "Dr. Allowance for doubtful debt $2,345, Cr. Irrecoverable debt $2,345"], answer: "Dr. Irrecoverable debt $2,345, Cr. Trade receivable $2,345" },
+    { id: "M7_11", type: "text", question: "Paid $840 for 12-month subscription starting 1 July 2025. Amount in P&L for year ended 31 Oct 2025 is:", answer: "280" },
+    { id: "M7_12", type: "text", question: "Motor vehicle cost $14,500 on 1 March 2025, useful life 4 yrs, residual value $2,500. Straight line depreciation for year ending 31 Dec 2025 (10 months):", answer: "2500" },
+    { id: "M7_13", type: "mc", question: "Electricity expense $2,040 includes 3 months ended 31 May 2025 totalling $555. Year end 31 March 2025 adjustment:", options: ["Dr. Prepaid expenses $370, Cr. Electricity expenses $370", "Dr. Electricity expenses $370, Cr. Prepaid expenses $370", "Dr. Electricity expenses $370, Cr. Accrued expenses $370", "Dr. Accrued expenses $370, Cr. Electricity expenses $370"], answer: "Dr. Prepaid expenses $370, Cr. Electricity expenses $370" },
+    { id: "M7_14", type: "text", question: "Computer bought 1 April 2022 for $18,900, residual value $2,200, life 5 yrs. Carrying value as at 31 March 2025 (3 years):", answer: "8880" },
+    { id: "M7_15", type: "text", question: "Computer bought 1 April 2024 for $16,420, residual $1,500, life 5 yrs. Carrying value at 31 March 2025:", answer: "13436" },
+    { id: "M7_16", type: "text", question: "Prepayment for telephone $600 on 1 Jan 2025. Bank paid $8,420 for year ended 31 Dec 2025. Includes $825 for quarter ended 31 Jan 2026. P&L figure is:", answer: "8745" },
+    { id: "M7_22", type: "text", question: "Issued 70,000 ordinary shares (nominal $0.50) at $0.80 each. Effect on Share Premium account is:", answer: "21000" },
+    { id: "M7_24", type: "text", question: "Issued 70,000 preference shares at $1 with 4% dividend. Profit $80,000. Total preference dividend is:", answer: "2800" },
+    { id: "M7_25", type: "text", question: "Sales $18,240, gross margin 60%. Cost of sales is:", answer: "7296" },
+    { id: "M7_26", type: "text", question: "Receivables collection period 38 days, credit sales $43,940 (260 working days). Receivables balance is:", answer: "6415" },
+
+    // Mock 8
+    { id: "M8_01", type: "mc", question: "Business document to check all credit notes and invoices in a specific period:", options: ["Remittance advice", "Statement of account", "Bank statement", "Statement of profit or loss"], answer: "Statement of account" },
+    { id: "M8_02", type: "mc", question: "Main purpose of comparing delivery note against purchase order is to identify discrepancies.", options: ["True", "False"], answer: "True" },
+    { id: "M8_03", type: "mc", question: "Control account $17,340, sum of sales ledger $16,800. Difference explained by:", options: ["A sales invoice for $540 has been omitted from the accounting records of the business", "A sales invoice for $270 has been recorded twice in the trade receivables ledger control account", "A sales discount for $270 has been recorded twice in a customer account in the trade receivable ledger", "A credit note for $540 has been omitted from a individual customer account in the trade receivables ledger"], answer: "A sales discount for $270 has been recorded twice in a customer account in the trade receivable ledger" },
+    { id: "M8_04", type: "mc", question: "Error resulting in a balance remaining in suspense account:", options: ["The depreciation charge for equipment for the year has been recorded as: Dr. Depreciation, Dr. Accumulated deprecation", "Discount allowed amount $430 have been recorded as $340 in the discount allowed account. The opposite entry was recorded correctly.", "Bank interest received amounting to $48 has been recorded as: Dr. Bank Interest, Cr. Bank", "The purchase of office equipment has been recorded as: Dr. Office stationery, Cr. Bank"], answer: "Discount allowed amount $430 have been recorded as $340 in the discount allowed account. The opposite entry was recorded correctly." },
+    { id: "M8_06", type: "text", question: "Bank paid $3,440. Includes $690 for quarter ended 31 May 2025. Prepaid expenses for year ending 31 March 2025 (2 months):", answer: "460" },
+    { id: "M8_07", type: "text", question: "Computer cost $15,592 on 1 Dec 2025, life 4 yrs, scrap $1,000. Straight line depreciation for year ending 31 March 2026 (4 months):", answer: "1216" },
+    { id: "M8_08", type: "text", question: "Allowance balance $1,254. Year end receivables $27,300, required allowance 4%. Adjustment in P&L is (write 162 reduction):", answer: "162" },
+    { id: "M8_09", type: "mc", question: "Which item is posted at DEBIT side?", options: ["The entry in allowance for doubtful debts adjustment account to show an increase in allowance for doubtful debt", "The entry in the office expenses account to show an adjustment for office expenses prepaid", "The entry in the rental income account to show an adjustment for prepaid income", "The entry in the office equipment at cost account when disposing an office equipment"], answer: "The entry in allowance for doubtful debts adjustment account to show an increase in allowance for doubtful debt" },
+    { id: "M8_10", type: "mc", question: "Which item does NOT appear in partnership appropriation account?", options: ["Interest on capital", "Interest on drawings", "Salary of partners", "Share premium"], answer: "Share premium" },
+    { id: "M8_13", type: "text", question: "Gross profit margin 40%. Opening inventory $3,426, Sales $43,260, Purchases $26,744. Closing inventory is:", answer: "4214" },
+    { id: "M8_14", type: "text", question: "Share premium $16,250. Issued 5,000 shares at $2.75 ($1 nominal). Share premium balance at start of year was:", answer: "7500" },
+    { id: "M8_15", type: "text", question: "Total assets $29,860, Equity $12,970, Current liabilities $8,890. Non-current bank loan balance is:", answer: "8000" },
+    { id: "M8_16", type: "text", question: "Current assets = Inventory $15,230 + Receivables $7,240 + Cash $1,530. Payables $8,000. Current ratio (1 decimal place) is:", answer: "3.0" },
+    { id: "M8_17", type: "mc", question: "Formula (Current assets - closing inventory) / current liabilities calculates:", options: ["Current ratio", "Acid-test ratio", "Return on capital employed", "Gross profit mark-up"], answer: "Acid-test ratio" },
+    { id: "M8_18", type: "text", question: "Receivables collection period 40 days, year-end receivables $36,480. Credit sales revenue (365 days) is:", answer: "332880" },
+    { id: "M8_19", type: "text", question: "Sales $92,180, Trade receivables $8,530. Receivable collection period in days (rounded up) is:", answer: "34" },
+    { id: "M8_20", type: "mc", question: "A decrease in trade payables payment period means taking longer to credit suppliers.", options: ["True", "False"], answer: "False" },
+    { id: "M8_21", type: "mc", question: "NOT a business document for recording transactions:", options: ["Partnership deed", "Credit Note", "Sales invoice", "Delivery order"], answer: "Partnership deed" },
+    { id: "M8_22", type: "mc", question: "Trade receivable ledger control account appears under:", options: ["Non-current assets", "Current assets", "Non-current liabilities", "Current liabilities"], answer: "Current assets" },
+    { id: "M8_23", type: "mc", question: "Trial balance: Debit $79,850, Credit $78,210. Entry to open suspense account:", options: ["$1,640 debit", "$1,640 credit", "$3,280 debit", "$820 credit"], answer: "$1,640 credit" },
+    { id: "M8_24", type: "mc", question: "Asset most likely to use diminishing balance method:", options: ["Motor vehicle", "Land", "Fixture and fitting", "Building"], answer: "Motor vehicle" },
+    { id: "M8_25", type: "mc", question: "Bank payment to owner recorded as drawings applies concept of:", options: ["Accrual", "Business entity", "Consistence", "Prudence"], answer: "Business entity" },
+    { id: "M8_26", type: "text", question: "Bought equipment 1 Aug 2024 for $52,000. Diminishing balance 25%. Depreciation charge for year ending 31 July 2026 (2nd year) is:", answer: "9750" },
+    { id: "M8_30", type: "mc", question: "Formula for gross profit mark up:", options: ["Gross profit / sales", "Gross profit / cost of sales", "Gross profit / capital employed", "Current assets / current liabilities"], answer: "Gross profit / cost of sales" },
+
+    // Concept: Effect to Profit/Loss
+    { id: "EFF_01", type: "mc", question: "Effect on Profit: What is the impact of an Increase in Sales on Gross Profit?", options: ["Increase in gross profit", "Decrease in gross profit", "No effect to gross profit"], answer: "Increase in gross profit" },
+    { id: "EFF_02", type: "mc", question: "Effect on Profit: What is the impact of an Increase in Purchases on Gross Profit?", options: ["Increase in gross profit", "Decrease in gross profit", "No effect to gross profit"], answer: "Decrease in gross profit" },
+    { id: "EFF_03", type: "mc", question: "Effect on Profit: What is the impact of an Increase in Closing Inventory on Gross Profit?", options: ["Increase in gross profit", "Decrease in gross profit", "No effect to gross profit"], answer: "Increase in gross profit" },
+    { id: "EFF_04", type: "mc", question: "Effect on Profit: What is the impact of an Increase in Expenses on Profit for the year?", options: ["Profit for the year increase", "Profit for the year decrease", "No effect to profit for the year"], answer: "Profit for the year decrease" },
+    { id: "EFF_05", type: "mc", question: "Effect on Profit: What is the impact of Carriage Outwards on Gross Profit?", options: ["Increase in gross profit", "Decrease in gross profit", "No effect to gross profit"], answer: "No effect to gross profit" }
+];
+
+let currentQuestions = [];
+
+function initQuiz() {
+    document.getElementById('resultBox').style.display = 'none';
+    
+    // 隨機抽取 30 題
+    const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+    currentQuestions = shuffled.slice(0, 30);
+
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+
+    currentQuestions.forEach((q, index) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'question-card';
+        qCard.id = `q_card_${index}`;
+
+        let html = `<div class="question-text">Q${index + 1}. ${q.question}</div>`;
+
+        if (q.type === 'mc') {
+            html += `<div class="options">`;
+            q.options.forEach((opt) => {
+                html += `
+                    <label class="option-label">
+                        <input type="radio" name="q_${index}" value="${opt}">
+                        ${opt}
+                    </label>
+                `;
+            });
+            html += `</div>`;
+        } else if (q.type === 'text') {
+            html += `
+                <div class="options">
+                    <input type="text" name="q_${index}" placeholder="請在此輸入答案數值或關鍵字">
+                </div>
+            `;
+        }
+
+        html += `<div id="feedback_${index}" class="feedback" style="display:none;"></div>`;
+        qCard.innerHTML = html;
+        container.appendChild(qCard);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function submitQuiz() {
+    let score = 0;
+
+    currentQuestions.forEach((q, index) => {
+        const feedbackDiv = document.getElementById(`feedback_${index}`);
+        let userAns = "";
+
+        if (q.type === 'mc') {
+            const selected = document.querySelector(`input[name="q_${index}"]:checked`);
+            if (selected) userAns = selected.value;
+        } else if (q.type === 'text') {
+            const input = document.querySelector(`input[name="q_${index}"]`);
+            if (input) userAns = input.value.trim();
+        }
+
+        feedbackDiv.style.display = 'block';
+
+        const isCorrect = userAns.toString().toLowerCase().replace(/,|\$|\s/g, '') === 
+                          q.answer.toString().toLowerCase().replace(/,|\$|\s/g, '');
+
+        if (isCorrect) {
+            score++;
+            feedbackDiv.innerHTML = `<span class="correct">✓ 正確！</span>`;
+        } else {
+            feedbackDiv.innerHTML = `<span class="wrong">✗ 錯誤！</span> 你的答案：${userAns || "未作答"} | <strong>正確答案：${q.answer}</strong>`;
+        }
+    });
+
+    const resultBox = document.getElementById('resultBox');
+    const scoreText = document.getElementById('scoreText');
+    const percentage = Math.round((score / currentQuestions.length) * 100);
+    
+    scoreText.innerHTML = `得分：<strong>${score} / ${currentQuestions.length}</strong> （正確率：${percentage}%）`;
+    resultBox.style.display = 'block';
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.onload = initQuiz;
+</script>
+
+</body>
+</html>
